@@ -19,7 +19,7 @@ MONGO_DB_URI = getenv("MONGO_DB_URI", None)
 MUSIC_BOT_NAME = getenv("MUSIC_BOT_NAME", None)
 PRIVATE_BOT_MODE = getenv("PRIVATE_BOT_MODE", None)
 
-DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 900))
+DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 9000))
 
 # Chat id of a group for logging bot's activities
 LOGGER_ID = int(getenv("LOGGER_ID", None))
@@ -35,7 +35,7 @@ HEROKU_API_KEY = getenv("HEROKU_API_KEY")
 
 UPSTREAM_REPO = getenv(
     "UPSTREAM_REPO",
-    "https://github.com/WCGKING/BrandrdXMusic",
+    "https://github.com/ShahinaAbhi143/abhibrand",
 )
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "main")
 GIT_TOKEN = getenv(
