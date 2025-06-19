@@ -6,7 +6,7 @@ from pyrogram.errors import FloodWait
 
 from BrandrdXMusic.utils.database import get_assistant
 from BrandrdXMusic import app
-from BrandrdXMusic.utils.abhi_ban import admin_filter
+from BrandrdXMusic.utils.branded_ban import admin_filter
 
 SPAM_CHATS = []
 
