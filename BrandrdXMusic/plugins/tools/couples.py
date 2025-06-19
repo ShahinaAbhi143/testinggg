@@ -81,7 +81,7 @@ async def ctest(_, message):
          img1 = Image.open(f"{p1}")
          img2 = Image.open(f"{p2}")
 
-         img = Image.open("BrandrdXMusic/assets/cppicbranded.jpg")
+         img = Image.open("BrandrdXMusic/assets/abhi.jpg")
 
          img1 = img1.resize((437,437))
          img2 = img2.resize((437,437))

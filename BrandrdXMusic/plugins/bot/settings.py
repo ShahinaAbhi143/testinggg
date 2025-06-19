@@ -9,6 +9,7 @@ from pyrogram.types import (
     InputMediaPhoto,
     InputMediaVideo,
 )
+import logging
 
 from BrandrdXMusic import app
 from BrandrdXMusic.utils.database import (
@@ -38,6 +39,9 @@ from BrandrdXMusic.utils.inline.settings import (
 from BrandrdXMusic.utils.inline.start import private_panel
 from config import BANNED_USERS, OWNER_ID, MUSIC_BOT_NAME, START_IMG_URL
 
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @app.on_message(
     filters.command(["settings", "setting"]) & filters.group & ~BANNED_USERS
@@ -53,8 +57,13 @@ async def settings_mar(client, message: Message, _):
 @app.on_callback_query(filters.regex("gib_source") & ~BANNED_USERS)
 @languageCB
 async def gib_repo(client, CallbackQuery, _):
+    current_media = getattr(CallbackQuery.message, 'video', None)
+    new_media = "https://graph.org/file/84d30d4fd04570c0e0256.mp4"
+    if current_media and current_media.file_id == new_media:
+        return
+
     await CallbackQuery.edit_message_media(
-        InputMediaVideo("https://te.legra.ph/file/ef47f077b671f69f8d8f0.mp4"),
+        InputMediaVideo(new_media),
         reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton(text="ʙᴀᴄᴋ", callback_data=f"settingsback_helper")]]
         ),
@@ -87,21 +96,85 @@ async def settings_back_markup(client, CallbackQuery: CallbackQuery, _):
     except:
         pass
     if CallbackQuery.message.chat.type == ChatType.PRIVATE:
-        await app.resolve_peer(OWNER_ID)
-        OWNER = OWNER_ID
+        is_owner = False
+        try:
+            user = await app.resolve_peer(OWNER_ID)
+            if user.user_id == CallbackQuery.from_user.id:
+                is_owner = True
+                logger.info(f"User {CallbackQuery.from_user.id} is the owner (OWNER_ID: {OWNER_ID})")
+            else:
+                logger.info(f"User {CallbackQuery.from_user.id} is NOT the owner (OWNER_ID: {OWNER_ID})")
+        except Exception as e:
+            logger.error(f"Error resolving OWNER_ID {OWNER_ID}: {str(e)}")
+            pass
+
         buttons = private_panel(_)
+        # Custom Owner button with stylish text
+        buttons.append([InlineKeyboardButton(text="🥀 Dᴏɴᴛ Cʟɪᴄᴋ Hᴇʀᴇ 🥀", callback_data="owner_redirect")])
+        
+        current_media = getattr(CallbackQuery.message, 'photo', None)
+        current_caption = CallbackQuery.message.caption or ""
+        new_caption = _["start_2"].format(CallbackQuery.from_user.first_name, app.mention) + "\n\n⚡ Wᴀɪᴛ... ⚡\n✨ Fᴀᴛʜᴇʀ... ✨\n🔥 Iꜱ Cᴏᴍɪɴɢ 🔥"
+
+        if (current_media and current_media.file_id == START_IMG_URL) and (current_caption == new_caption):
+            try:
+                return await CallbackQuery.edit_message_reply_markup(
+                    reply_markup=InlineKeyboardMarkup(buttons)
+                )
+            except MessageNotModified:
+                return
+
         return await CallbackQuery.edit_message_media(
             InputMediaPhoto(
                 media=START_IMG_URL,
-                caption=_["start_2"].format(
-                    CallbackQuery.from_user.first_name, app.mention),
+                caption=new_caption,
             ),
             reply_markup=InlineKeyboardMarkup(buttons),
         )
     else:
         buttons = setting_markup(_)
-        return await CallbackQuery.edit_message_reply_markup(
-            reply_markup=InlineKeyboardMarkup(buttons)
+        try:
+            return await CallbackQuery.edit_message_reply_markup(
+                reply_markup=InlineKeyboardMarkup(buttons)
+            )
+        except MessageNotModified:
+            return
+
+@app.on_callback_query(filters.regex("owner_redirect") & ~BANNED_USERS)
+@languageCB
+async def owner_redirect(client, CallbackQuery: CallbackQuery, _):
+    try:
+        await CallbackQuery.answer()
+    except Exception as e:
+        logger.error(f"Error answering callback query: {str(e)}")
+        return
+
+    owner_link = "tg://resolve?domain=ceo_of_secularism"
+    try:
+        await CallbackQuery.edit_message_text(
+            f"||Sᴀʏ Pᴀᴘᴀ Tᴏ Oᴡɴᴇʀ||\n👉 [ Pᴀᴘᴀ Jɪ  😎]({owner_link})",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(text="🥀 Pᴀᴘᴀ Jɪ 🥀 ", url=owner_link),
+                        InlineKeyboardButton(text="🔙 Back", callback_data="settingsback_helper"),
+                    ]
+                ]
+            ),
+            disable_web_page_preview=False,
+        )
+        logger.info(f"Redirecting user {CallbackQuery.from_user.id} to owner link: {owner_link}")
+    except Exception as e:
+        logger.error(f"Error redirecting to owner link {owner_link}: {str(e)}")
+        await CallbackQuery.edit_message_text(
+            f"❌ Could not redirect to the owner. Please contact them manually at @ceo_of_secularism 💬",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(text="🔙 Back", callback_data="settingsback_helper"),
+                    ]
+                ]
+            ),
         )
 
 

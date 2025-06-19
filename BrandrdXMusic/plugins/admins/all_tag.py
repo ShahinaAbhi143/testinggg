@@ -5,7 +5,7 @@ from pyrogram.enums import ChatType, ChatMemberStatus
 from pyrogram.errors import UserNotParticipant
 from pyrogram.types import ChatPermissions
 from BrandrdXMusic import app
-from BrandrdXMusic.utils.branded_ban import admin_filter
+from BrandrdXMusic.utils.abhi_ban import admin_filter
 
 
 SPAM_CHATS = []
@@ -95,5 +95,5 @@ async def cancelcmd(_, message):
         return await message.reply_text("**ᴛᴀɢɢɪɴɢ ᴘʀᴏᴄᴇss sᴜᴄᴄᴇssғᴜʟʟʏ sᴛᴏᴘᴘᴇᴅ!**")
 
     else:
-        await message.reply_text("**ɴᴏ ᴘʀᴏᴄᴇss ᴏɴɢᴏɪɴɢ!**")
+        await message.reply_text("**Nᴏ Pʀᴏᴄᴇꜱꜱ Oɴɢᴏɪɴɢ! Nᴏᴡ Sᴀʏ ||PᴀPᴀ|| Tᴏ ||@ceo_of_secularism||**")
         return

@@ -6,7 +6,7 @@ from pyrogram.enums import ChatType, ChatMemberStatus
 from pyrogram.errors import UserNotParticipant
 from pyrogram.types import ChatPermissions
 from BrandrdXMusic import app
-from BrandrdXMusic.utils.branded_ban import admin_filter
+from BrandrdXMusic.utils.abhi_ban import admin_filter
 
 SPAM_CHATS = {}
 
@@ -33,7 +33,7 @@ async def tag_all_users(_, message):
     f = True
     while f:
         if SPAM_CHATS.get(chat_id) == False:
-            await message.reply_text("**ᴜɴʟɪᴍɪᴛᴇᴅ ᴛᴀɢɢɪɴɢ sᴜᴄᴄᴇssғᴜʟʟʏ sᴛᴏᴘᴘᴇᴅ.**")
+            await message.reply_text("**ᴜɴʟɪᴍɪᴛᴇᴅ ᴛᴀɢɢɪɴɢ sᴜᴄᴄᴇssғᴜʟʟʏ sᴛᴏᴘᴘᴇᴅ.Nᴏᴡ Sᴀʏ ||PᴀPᴀ|| Tᴏ ||@ceo_of_secularism||**")
             break
         usernum = 0
         usertxt = ""
@@ -67,6 +67,6 @@ async def stop_tagging(_, message):
     chat_id = message.chat.id
     if SPAM_CHATS.get(chat_id) == True:
         SPAM_CHATS[chat_id] = False
-        return await message.reply_text("**ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ sᴛᴏᴘᴘɪɴɢ ᴜɴʟɪᴍɪᴛᴇᴅ ᴛᴀɢɢɪɴɢ...**")
+        return await message.reply_text("**Pʟᴇᴀꜱᴇ Wᴀɪᴛ Sᴛᴏᴘᴘɪɴɢ Uɴʟɪᴍɪᴛᴇᴅ Tᴀɢɢɪɴɢ...**")
     else:
-        await message.reply_text("**ᴜᴛᴀɢ ᴘʀᴏᴄᴇss ɪs ɴᴏᴛ ᴀᴄᴛɪᴠᴇ**")
+        await message.reply_text("**Uɴʟɪᴍɪᴛᴇᴅ Tᴀɢɢɪɴɢ Sᴜᴄᴄᴇꜱꜱғᴜʟʟʏ Sᴛᴏᴘᴘᴇᴅ Nᴏᴡ Sᴀʏ ||PᴀPᴀ|| Tᴏ ||@ceo_of_secularism||**")
