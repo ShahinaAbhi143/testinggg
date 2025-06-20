@@ -6,6 +6,7 @@ from os import environ
 from typing import Union, Optional
 from PIL import Image, ImageDraw, ImageFont
 import asyncio
+from datetime import datetime
 
 # --------------------------------------------------------------------------------- #
 
@@ -57,11 +58,8 @@ font_path = "BrandrdXMusic/assets/hiroko.ttf"
 
 # --------------------------------------------------------------------------------- #
 
-# -------------
-
 @app.on_chat_member_updated(filters.group, group=20)
 async def member_has_left(client: app, member: ChatMemberUpdated):
-
     if (
         not member.new_chat_member
         and member.old_chat_member.status not in {
@@ -79,10 +77,19 @@ async def member_has_left(client: app, member: ChatMemberUpdated):
         else member.from_user
     )
 
+    # Get last seen (approximate, based on available data)
+    last_seen = "Unknown"
+    if user.status:
+        if user.status == "online":
+            last_seen = "Online"
+        elif user.status == "offline":
+            last_seen = datetime.fromtimestamp(user.status.date).strftime("%Y-%m-%d %H:%M:%S")
+    bio = getattr(user, 'bio', "None")  # Safely handle bio attribute
+
     # Check if the user has a profile photo
     if user.photo and user.photo.big_file_id:
         try:
-            # Add the photo path, caption, and button details
+            # Download profile photo
             photo = await app.download_media(user.photo.big_file_id)
 
             welcome_photo = await get_userinfo_img(
@@ -92,11 +99,23 @@ async def member_has_left(client: app, member: ChatMemberUpdated):
                 profile_path=photo,
             )
         
-            caption = f"**#New_Member_Left**\n\n**๏** {user.mention} **ʜᴀs ʟᴇғᴛ ᴛʜɪs ɢʀᴏᴜᴘ**\n**๏ sᴇᴇ ʏᴏᴜ sᴏᴏɴ ᴀɢᴀɪɴ..!**"
+            # Use username if available, otherwise use user_id link
+            redirect_link = f"tg://resolve?domain={user.username}" if user.username else f"tg://openmessage?user_id={user.id}"
             button_text = "๏ ᴠɪᴇᴡ ᴜsᴇʀ ๏"
 
-            # Generate a deep link to open the user's profile
-            deep_link = f"tg://openmessage?user_id={user.id}"
+            caption = (
+                f"➻ ᴜsᴇʀ ɪᴅ ‣ {user.id}\n"
+                f"➻ ғɪʀsᴛ ɴᴀᴍᴇ ‣ {user.first_name}\n"
+                f"➻ ʟᴀsᴛ ɴᴀᴍᴇ ‣ {user.last_name if user.last_name else 'None'}\n"
+                f"➻ ᴜsᴇʀɴᴀᴍᴇ ‣ @{user.username if user.username else 'None'}\n"
+                f"➻ ᴍᴇɴᴛɪᴏɴ ‣ {user.mention}\n"
+                f"➻ ʟᴀsᴛ sᴇᴇɴ ‣ {last_seen}\n"
+                f"➻ ᴅᴄ ɪᴅ ‣ {user.dc_id if user.dc_id else 'Unknown'}\n"
+                f"➻ ʙɪᴏ ‣ {bio}\n"
+                f"➻ ᴛᴇʟᴇɢʀᴀᴍ ᴘʀᴇᴍɪᴜᴍ ‣ {'True' if user.is_premium else 'False'}\n"
+                f"➖➖➖➖➖➖➖➖➖➖➖\n"
+                f"๏ 𝐌𝐀𝐃𝐄 𝐁𝐘 ➠ [Aʙнɪ 𓆩🇽𓆪 �_KI𝗡𝗚 📿](https://t.me/imagine_iq)"
+            )
 
             # Send the message with the photo, caption, and button
             message = await client.send_photo(
@@ -104,13 +123,13 @@ async def member_has_left(client: app, member: ChatMemberUpdated):
                 photo=welcome_photo,
                 caption=caption,
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton(button_text, url=deep_link)]
+                    [InlineKeyboardButton(button_text, url=redirect_link)]
                 ])
             )
 
-            # Schedule a task to delete the message after 30 seconds
+            # Schedule a task to delete the message after 20 seconds
             async def delete_message():
-                await asyncio.sleep(30)
+                await asyncio.sleep(20)
                 await message.delete()
 
             # Run the task
@@ -122,4 +141,3 @@ async def member_has_left(client: app, member: ChatMemberUpdated):
     else:
         # Handle the case where the user has no profile photo
         print(f"User {user.id} has no profile photo.")
-        
